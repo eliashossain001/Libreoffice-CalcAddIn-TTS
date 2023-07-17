@@ -1,7 +1,7 @@
 # LibreofficeCalcAddIn-TTS using Python UNO API
 
 # unodit
-UNO Dialog Tools is a Python3 command-line tool which takes a .xdl file written in the Basic Dialog Editor and generates dialog code in PyUNO (Python) in order to create LibreOffice extension, sidebar extension or embed in ODF documents. Unodit was developed with a focus on rapid prototyping in order to lower the barrier of entry for newcomers.
+UNO Dialog Tools is a Python3 command-line tool which takes a .xdl file written in the Basic Dialog Editor and generates dialog code in PyUNO (Python) in order to create LibreOffice extension, sidebar extension or embed in ODF documents. Unodit was developed with a focus on rapid prototyping in order to lower the barrier of entry for newcomers. Main documentation: https://github.com/kelsa-pi/unodit
 
 # Features
 unodit main features are:
