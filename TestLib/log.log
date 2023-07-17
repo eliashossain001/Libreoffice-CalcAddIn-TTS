@@ -1,0 +1,33 @@
+unodit - unodit - INFO - 
+Version:  unodit 0.8.0      Created:  Sun Jul 16 16:25:31 2023
+
+unodit directory = /home/elias/.config/libreoffice/4/user/Scripts/python/unodit
+---------------------------------------------------------------------
+mode      = script_oxt
+pydir     = /home/elias/.config/libreoffice/4/user/Scripts/python/TestLib
+xdlfile   = /home/elias/.config/libreoffice/4/user/basic/DialogLib/Default.xdl
+app name  = tts_calc
+panel     = 2
+indent    = 4
+---------------------------------------------------------------------
+
+unodit - mode_script_oxt - INFO - 
+MODE: ---------- script_oxt --------------------------------------
+oxt_creator - __init__ - INFO - NEW LOGGER: unodit.oxt_creator.CreateScriptExtension
+oxt_creator - create - INFO - oxt: tts_calc_Devel.oxt
+unodit - unodit - INFO - 
+CONTENT:/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib directory:
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/tts_calc_Devel.oxt,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/log.log,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/tts_convert_Devel.oxt,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/description.xml,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/Addons.xcu,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/description/title.txt,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/description/description.txt,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/registration/license.txt,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/META-INF/manifest.xml,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/src/tts_calc.py,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/src/tts_convert.py,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/src/pythonpath/tts_calc_UI.py,
+/home/elias/.config/libreoffice/4/user/Scripts/python/TestLib/src/pythonpath/tts_convert_UI.py,
+
