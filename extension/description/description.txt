@@ -1,0 +1,3 @@
+Bangla text-to-speech add-in for LibreOffice Calc.
+Converts Bijoy (ANSI) encoded Bangla text to Unicode and reads the
+selected cell range aloud using a self-hosted TTS inference service.

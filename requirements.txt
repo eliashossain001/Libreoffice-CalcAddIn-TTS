@@ -1,0 +1,4 @@
+requests
+pydub
+simpleaudio
+bijoy2unicode

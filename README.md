@@ -1,76 +1,105 @@
-# LibreofficeCalcAddIn-TTS using Python UNO API
+# 🔊 Bangla TTS Add-in for LibreOffice Calc
 
-# unodit
-UNO Dialog Tools is a Python3 command-line tool which takes a .xdl file written in the Basic Dialog Editor and generates dialog code in PyUNO (Python) in order to create LibreOffice extension, sidebar extension or embed in ODF documents. Unodit was developed with a focus on rapid prototyping in order to lower the barrier of entry for newcomers. Main documentation: https://github.com/kelsa-pi/unodit
+A LibreOffice Calc extension, written in Python using the UNO API, that reads Bangla spreadsheet content aloud. Select a cell range, click **Play**, and the add-in converts the text to speech through a self-hosted TTS inference service. It also converts legacy Bijoy (ANSI) encoded Bangla text to Unicode in place.
 
-# Features
-unodit main features are:
+## ✨ Features
 
-- Convert a .xdl file written with Basic Dialog Editor into a PyUNO (Python):
+- **Text-to-speech for cell ranges** — select cells in Calc and play them as natural-sounding Bangla audio
+- **Smart text chunking** — long text is split on punctuation and word-count limits so audio starts playing quickly
+- **Multi-threaded audio pipeline** — chunks are synthesized concurrently and played back in order
+- **ANSI (Bijoy) → Unicode conversion** — fix legacy-encoded Bangla text directly in the selected range
+- **Voice options** — dialog controls for gender (male/female) and voice maturity
+- **Native LibreOffice dialog** — built with the UNO Dialog Tools (unodit) workflow, launched from `Tools → Add-Ons`
 
-- unodit create file MyAppName_UI.py with actual python code. It defines a class called MyAppName_UI with dialog and dialog controls properties. Each button in your dialog is connected with action listener. New: window listener was added in sidebar. All changes made in this file will be overwritten if the file is generated again
+## 📁 Project Structure
 
-- Allows you to customize code according to your needs:
-
-In order to help you to add your own functionality to dialog unodit generates another file `MyAppName.py`. There is a new class MyAppName which extend MyAppName_UI. You can change dialog properties with eg. self.DialogModel.Title = 'Hello world' or control properties with eg.self.TextField1.Text = "My New Text". Each button in your dialog is connected with action event which execute callback function ButtonName_OnClick(). New: resizeControls event handler has been added, which will be called when sidebar has been resized. This allows you to resize/reposition controls in the sidebar dialog. Now you can write down the code to actually do something :)
-
-Object inspection and debugging:
-
-The file `MyAppName.py` provide convenient code, depending on your requirements and development practices, for easy object inspection and debugging with extension or in the IDE.
-
-Extension: One can use installed extension (MRI or Xray) by uncommenting code in section HELPERS FOR MRI AND  XRAY.
-
-IDE: First start LibreOffice with the command `soffice "--accept=socket,host=127.0.0.1,port=2002,tcpNoDelay=1;urp;StarOffice.ComponentContext" --norestore` as described in code section HELPER FOR AN IDE. Then step through code (tested with: PyCharm, Pyzo with PyUNO Workspace plugin).
-
-- Pack your code as extension, sidebar extension or embed in ODF documents:
-
-After finishing coding you can decide to distribute your code. unodit can create necessary files and generate extension or file for you. After installation, in some cases, user can start extension with Tools - AddOns - My App.
-
-- Provides simple dialog boxes for interaction with a user:
-
-If you only want simple GUI for your macros unodit provides simple dialog boxes for interaction with a user. In script interactions are invoked by simple function calls. If you decide to distribute your code unodit can create necessary files and generate extension for you.
-
-- Other features are:
-
-- all steps are logged to log.log file in project root
-- per project customization with ini file (copy config.ini in project root)
-- boilerplate code in templates directory
-- conversion .xdl to .py defined in schema.py
-- diff .xdl vs. schema.py
-- Your comments, feedback and patches are welcomed and appreciated.
-
-NOTE: This is a project that targets LibreOffice 6+ and Python3. Tested with Xubuntu 18.04. and LibreOffice 6+.
-
-# Installation
-Place the unodit directory somewhere on your Python path.
-
-# Usage
 ```
-python3 ./unodit.py -m -d [-f ] [-a] [-p] [-i]
+.
+├── extension/                  # LibreOffice extension package
+│   ├── src/
+│   │   ├── tts_calc.py         # Main add-in: TTS playback + Unicode conversion
+│   │   ├── tts_convert.py      # Converter variant of the add-in
+│   │   └── pythonpath/         # Generated dialog UI classes
+│   ├── META-INF/manifest.xml   # Extension package manifest
+│   ├── description.xml         # Extension metadata
+│   ├── Addons.xcu              # Tools → Add-Ons menu registration
+│   ├── description/            # Title and short description
+│   └── registration/           # License text
+├── dialogs/
+│   └── Default.xdl             # Dialog layout (Basic Dialog Editor format)
+├── config.ini                  # unodit project configuration
+└── requirements.txt            # Python dependencies
 ```
-m - mode
 
-d - full path to the output directory (project root)
+## 🛠️ Requirements
 
-f - full path to the xdl file
+- LibreOffice 6+ with Python 3 scripting support
+- Python packages (installed into the Python that LibreOffice uses):
 
-a - application name
-
-p - number of panels in deck
-
-i - number of spaces used for indentation in the generated code. If 0, \t is used as indent
-
-# Quick start
-
-- create dialog eg. Default.xdl in Dialog Editor
-
-- create project directory eg. TestLib in LIBREOFFICE_PATH/4/user/Scripts/python/
-
-- run unodit to create extension in project directory
+```bash
+pip install -r requirements.txt
 ```
-  python3 ./unodit.py -m 'script_all'
-                      -d 'LIBREOFFICE_PATH/4/user/Scripts/python/TestLib'
-                      -f 'LIBREOFFICE_PATH/4/user/basic/DialogLib/Default.xdl'
-                      -a 'Test_convert'
+
+- A running TTS inference endpoint that accepts `POST {"text", "model", "gender"}` and returns base64-encoded WAV audio in `{"output": ...}`
+
+## ⚙️ Configuration
+
+The add-in reads the TTS endpoint from the `TTS_API_URL` environment variable (or you can edit the `URL` constant at the top of `extension/src/tts_calc.py`):
+
+```bash
+export TTS_API_URL="https://your-tts-server.example.com/infer"
+soffice --calc
 ```
-install extension using Tools - Extension Manager or command-line /usr/bin/unopkg add ./Test_convert_Devel.oxt (Ubuntu)
+
+## 🚀 Installation
+
+1. Package the `extension/` directory as an `.oxt` (zip its contents, then rename), or regenerate it with [unodit](https://github.com/kelsa-pi/unodit):
+
+   ```bash
+   cd extension && zip -r ../bangla-tts-calc.oxt . && cd ..
+   ```
+
+2. Install it via `Tools → Extension Manager → Add`, or from the command line:
+
+   ```bash
+   unopkg add bangla-tts-calc.oxt
+   ```
+
+3. Restart LibreOffice Calc. The add-in appears under `Tools → Add-Ons → Bangla TTS`.
+
+## 🎯 Usage
+
+1. Open a spreadsheet containing Bangla text.
+2. Select the cell range you want to hear.
+3. Launch the add-in from `Tools → Add-Ons → Bangla TTS`.
+4. Choose voice options, then click **Play**.
+5. Use the **Unicode** button to convert Bijoy (ANSI) encoded cells to Unicode in place.
+
+## 🧩 How It Works
+
+1. The selected range's text is collected and split into chunks on punctuation (`। ? ! , ; :` etc.), with long chunks further split at a 20-word limit.
+2. Each chunk is sent to the TTS endpoint in its own thread, with automatic retries.
+3. Returned base64 WAV audio is decoded with `pydub` and queued.
+4. Chunks play back sequentially in original order while later chunks are still being synthesized, minimizing time-to-first-audio.
+
+## 🧪 Development
+
+To debug outside LibreOffice's embedded Python, start LibreOffice with a UNO socket and run the script from your IDE:
+
+```bash
+soffice "--accept=socket,host=127.0.0.1,port=2002,tcpNoDelay=1;urp;StarOffice.ComponentContext" --norestore
+python3 extension/src/tts_calc.py
+```
+
+Dialog UI classes under `extension/src/pythonpath/` are generated from `dialogs/Default.xdl` with [unodit](https://github.com/kelsa-pi/unodit); regenerating them overwrites manual changes.
+
+## 📄 License
+
+The extension scaffolding is based on [UNO Dialog Tools (unodit)](https://github.com/kelsa-pi/unodit), released under the GNU GPL v3.
+
+## 👨‍💼 Author
+
+**Elias Hossain**  
+_Machine Learning Researcher | PhD Student | AI x Reasoning Enthusiast_
+
+[![GitHub](https://img.shields.io/badge/GitHub-EliasHossain001-blue?logo=github)](https://github.com/EliasHossain001)

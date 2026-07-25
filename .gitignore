@@ -1,0 +1,14 @@
+# Build artifacts
+*.oxt
+
+# Logs
+log.log
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE
+.idea/
+.vscode/

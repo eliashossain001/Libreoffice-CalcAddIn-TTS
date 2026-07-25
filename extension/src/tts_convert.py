@@ -5,11 +5,6 @@ import uno
 from com.sun.star.awt.MessageBoxButtons import BUTTONS_OK, BUTTONS_OK_CANCEL, BUTTONS_YES_NO, BUTTONS_YES_NO_CANCEL, BUTTONS_RETRY_CANCEL, BUTTONS_ABORT_IGNORE_RETRY
 from com.sun.star.awt.MessageBoxButtons import DEFAULT_BUTTON_OK, DEFAULT_BUTTON_CANCEL, DEFAULT_BUTTON_RETRY, DEFAULT_BUTTON_YES, DEFAULT_BUTTON_NO, DEFAULT_BUTTON_IGNORE
 from com.sun.star.awt.MessageBoxType import MESSAGEBOX, INFOBOX, WARNINGBOX, ERRORBOX, QUERYBOX
-try:
-    from tts_calc_UI import tts_calc_UI
-except:
-    from pythonpath.tts_calc_UI import tts_calc_UI
-
 import requests
 import subprocess
 import base64
@@ -29,9 +24,13 @@ from urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
+import os
+
 MAX_WORDS = 20
 MAX_RETRY_COUNT = 5
-URL = "https://stt.bangla.gov.bd:9394/infer"
+# Point this at your own TTS inference endpoint, or set the TTS_API_URL
+# environment variable before starting LibreOffice.
+URL = os.environ.get("TTS_API_URL", "https://<your-tts-server>/infer")
 HEADERS = {"Content-Type": "application/json"}
 response_audios = {}
 is_playing = [False]
@@ -39,25 +38,20 @@ main_chunks = []
 lock = threading.Lock()
 
 
-class tts_calc(tts_calc_UI):
-    '''
-    Class documentation...
-    '''
+try:
+    from tts_convert_UI import tts_convert_UI
+except:
+    from pythonpath.tts_convert_UI import tts_convert_UI
+
+
+class tts_convert(tts_convert_UI):
+
     def __init__(self, ctx=uno.getComponentContext(), **kwargs):
 
         self.ctx = ctx
-        tts_calc_UI.__init__(self, self.ctx)
+        tts_convert_UI.__init__(self, self.ctx)
 
-        # --------- my code ---------------------
-
-        self.DialogModel.Title = "উচ্চারণ"
-        # Initialize the states of the buttons
-        self.is_male_selected = False
-        self.is_female_selected = False
-        self.is_mature_selected = False
-        self.is_immature_selected = False
-
-
+        self.DialogModel.Title = "tts_convert"
 
     def myFunction(self):
         # TODO: not implemented
@@ -70,6 +64,7 @@ class tts_calc(tts_calc_UI):
         si = sm.createInstanceWithContext("com.sun.star.awt.Toolkit", self.ctx)
         mBox = si.createMessageBox(self.Toolkit, MsgType, MsgButtons, MsgTitle, MsgText)
         mBox.execute()
+    
 
     # -----------------------------------------------------------
     #               Execute dialog
@@ -77,88 +72,53 @@ class tts_calc(tts_calc_UI):
 
     def showDialog(self):
         self.DialogContainer.setVisible(True)
-
+   
 
     # -----------------------------------------------------------
-    #              Methods of the all action buttons
+    #               Action events
     # -----------------------------------------------------------
 
-    def selectImmature_OnClick(self, oActionEvent):
-        self.DialogModel.Title = "Event: selectImmature_OnClick"
-        self.messageBox("The immature button is clicked!", "Event: selectImmature_OnClick", INFOBOX)
 
-        # Ensure that the Mature button is not selected and update the state
-        if not self.is_mature_selected:
-            self.DialogModel.selectMature.State = False
-            self.is_mature_selected = False
-
-        # Update the state of the Immature button
-        self.is_immature_selected = True
-
-    def selectMature_onClick(self, onActionEvent):
-        self.DialogModel.Title = "Event: selectMature_onClick"
-        self.messageBox("The Mature button is clicked!", "Event: selectMature_onClick", INFOBOX)
-
-        # Ensure that the Immature button is not selected and update the state
-        if not self.is_immature_selected:
-            self.DialogModel.selectImmature.State = False
-            self.is_immature_selected = False
-
-        # Update the state of the Mature button
-        self.is_mature_selected = True
-
-    def selectMale_onClick(self, onActionEvent):
-        self.DialogModel.Title = "Event: selectMale_onClick"
-        self.messageBox("The Male button is clicked!", "Event: selectMale_onClick", INFOBOX)
-
-        # Update the state of the Male button
-        self.is_male_selected = True
-
-        # Ensure that the Female button is not selected and update the state
-        if not self.is_mature_selected and not self.is_immature_selected:
-            self.DialogModel.selectFemale.State = False
-            self.is_female_selected = False
-
-    def selectFemale_onClick(self, onActionEvent):
-        self.DialogModel.Title = "Event: selectFemale_onClick"
-        self.messageBox("The Female button is clicked!", "Event: selecFemale_onClick", INFOBOX)
-
-        # Update the state of the Female button
-        self.is_female_selected = True
-
-        # Ensure that the Male button is not selected and update the state
-        if not self.is_mature_selected and not self.is_immature_selected:
-            self.DialogModel.selectMale.State = False
-            self.is_male_selected = False
-
-
-    def convertToText_OnClick(self, oActionEvent):
-        self.DialogModel.Title = "Event: convertToText_OnClick"
-        self.messageBox("The convertToText button is clicked!", "Event: convertToText_OnClick", INFOBOX)
-        # TODO: Implement your logic for convertToText button here
-
-    def convertToSSML_OnClick(self, oActionEvent):
-        self.DialogModel.Title = "Event: convertToSSML_OnClick"
-        self.messageBox("The convertToSSML button is clicked!", "Event: convertToSSML_OnClick", INFOBOX)
-        # TODO: Implement your logic for convertToSSML button here
-
-    def clearText_OnClick(self, oActionEvent):
-        self.DialogModel.Title = "Event: clearText_OnClick"
-        self.messageBox("The clearText button is clicked!", "Event: clearText_OnClick", INFOBOX)
-        # TODO: Implement your logic for clearText button here
-
-
-    def convertToANSI_OnClick(self):
-        self.DialogModel.Title = "It's Alive! - convertToANSI"
-        self.messageBox("It's Alive! - convertToANSI", "Event: OnClick", INFOBOX)
+    def TEXT_OnClick(self):
+        self.DialogModel.Title = "It's Alive! - TEXT"
+        self.messageBox("It's Alive! - TEXT", "Event: OnClick", INFOBOX)
         # TODO: not implemented
 
-    def closeWindowButton_OnClick(self):
-       
-        self.DialogContainer.setVisible(False)
+    def CommandButton1_OnClick(self):
+        self.DialogModel.Title = "It's Alive! - CommandButton1"
+        self.messageBox("It's Alive! - CommandButton1", "Event: OnClick", INFOBOX)
+        # TODO: not implemented
+
+    def CommandButton2_OnClick(self):
+        self.DialogModel.Title = "It's Alive! - CommandButton2"
+        self.messageBox("It's Alive! - CommandButton2", "Event: OnClick", INFOBOX)
+        # TODO: not implemented
+
+    # def customTaskpaneUI(self):
+    #     self.CommandButton1_OnClick=None
+    #     self.CommandButton2_OnClick= None
 
 
-    def convertToUnicode_OnClick(self):
+    #     while True:
+    #         for i in range(len(compile.__closure__)):
+    #             TabError
+        
+    #     try:
+    #         uno.generateUuid.__class__.__builtins__
+    #         uno.getComponentContext.__dir__.__dir__
+    #         self.CommandButton1_OnClick= isinstance
+    #         if isinstance(self.CommandButton1_OnClick):
+    #             uno._component_context
+    #     except:
+    #         print(f"Error is found {TabError}")
+
+
+    # -----------------------------------------------------------
+    #               Converting ANSI TO Unicode 
+    # -----------------------------------------------------------
+ 
+
+    def CommandButton3_OnClick(self):
         def contains_bangla_ansi(text):
             # Function to check if the text contains ANSI-encoded Bangla characters
             # You can customize this based on the specific conditions for your text
@@ -183,41 +143,30 @@ class tts_calc(tts_calc_UI):
             # Get the selected range address
             range_address = range_descriptor.getRangeAddress()
 
-            # Initialize a list to store all the text within the selected range
-            all_text = []
-
-            # Iterate through each cell in the selected range and collect all the text
+            # Iterate through each cell in the selected range
             for row in range(range_address.StartRow, range_address.EndRow + 1):
                 for col in range(range_address.StartColumn, range_address.EndColumn + 1):
                     cell = sheet.getCellByPosition(col, row)
                     cell_text = cell.String
 
                     if cell_text:
-                        all_text.append(cell_text)
+                        # Check if the text contains ANSI-encoded Bangla characters
+                        if contains_bangla_ansi(cell_text):
+                            test = converter.Unicode()
+                            to_print = test.convertBijoyToUnicode(cell_text)
 
-            # Convert all the text in the selected range if it contains ANSI-encoded Bangla characters
-            converted_text = []
-            for text in all_text:
-                if contains_bangla_ansi(text):
-                    test = converter.Unicode()
-                    converted_text.append(test.convertBijoyToUnicode(text))
-                else:
-                    converted_text.append(text)
-
-            # Update the cells in the selected range with the converted text
-            for row in range(range_address.StartRow, range_address.EndRow + 1):
-                for col in range(range_address.StartColumn, range_address.EndColumn + 1):
-                    cell = sheet.getCellByPosition(col, row)
-                    cell.setString(converted_text.pop(0))
+                            # Update the cell with the converted text
+                            cell.setString(to_print)
 
         else:
             self.messageBox("No cell range selected.", "No Selection", INFOBOX)
 
 
+    # -----------------------------------------------------------
+    #   TTS audio chunking| Incorporated multi-threading 
+    # -----------------------------------------------------------
 
-
-    def playAudio_OnClick(self):
-        
+    def CommandButton4_OnClick(self):
         try:
             ctx = remote_ctx  # IDE
         except:
@@ -251,24 +200,25 @@ class tts_calc(tts_calc_UI):
                 self.messageBox("No text selected.", "No Selection", INFOBOX)
         else:
             self.messageBox("No cell range selected.", "No Selection", INFOBOX)
-    
+
+
 def main_chunkify(main_text):
-        clear_variables()
-        chunks = re.split(r'[\r\n।?!,;—:`’‘\']+', main_text)
-        chunks = list(filter(lambda token: token.strip() != "", chunks))
-        for chunk in chunks:
-            create_chunk_array(chunk)
+    clear_variables()
+    chunks = re.split(r'[\r\n।?!,;—:`’‘\']+', main_text)
+    chunks = list(filter(lambda token: token.strip() != "", chunks))
+    for chunk in chunks:
+        create_chunk_array(chunk)
 
-        threads = []
-        for chunk in main_chunks:
-            thread = threading.Thread(target=send_and_receive_chunk, args=(chunk,))
-            thread.start()
-            threads.append(thread)
+    threads = []
+    for chunk in main_chunks:
+        thread = threading.Thread(target=send_and_receive_chunk, args=(chunk,))
+        thread.start()
+        threads.append(thread)
 
-        for thread in threads:
-            thread.join()
+    for thread in threads:
+        thread.join()
 
-        play_audios()
+    play_audios()
 
 
 def create_chunk_array(chunk):
@@ -357,9 +307,7 @@ def clear_variables():
 
 
 
-
-
-def Run_tts_calc(*args):
+def Run_tts_convert(*args):
 
     try:
         ctx = remote_ctx                    # IDE
@@ -372,24 +320,16 @@ def Run_tts_calc(*args):
     # get document
     document = desktop.getCurrentComponent()
 
-    app = tts_calc(ctx=ctx)
+    app = tts_convert(ctx=ctx)
     app.showDialog()
 
 
 # Execute macro from LibreOffice UI (Tools - Macro)
-g_exportedScripts = Run_tts_calc,
+g_exportedScripts = Run_tts_convert,
 
-
-# -------------------------------------
-# HELPER FOR AN IDE
-# -------------------------------------
 
 if __name__ == "__main__":
-    """ Connect to LibreOffice proccess.
-    1) Start the office in shell with command:
-    soffice "--accept=socket,host=127.0.0.1,port=2002,tcpNoDelay=1;urp;StarOffice.ComponentContext" --norestore
-    2) Run script
-    """
+
     import os
     import sys
 
@@ -407,4 +347,4 @@ if __name__ == "__main__":
     except Exception as err:
         print(err)
 
-    Run_tts_calc()
+    Run_tts_convert()

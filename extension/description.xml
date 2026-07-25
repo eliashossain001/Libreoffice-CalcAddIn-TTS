@@ -19,14 +19,14 @@ Tip: When edited open file in browser to check for errors.
     Unique identifier
     
     -->
-    <identifier value="my.identifier.value.for.myaddons.MyAddOn"/>
+    <identifier value="io.github.eliashossain001.BanglaTTSCalc"/>
 
     <version value="0.1.0"/>
 
     <platform value="all"/>
 
     <publisher>
-        <name xlink:href="mailto:publisher.name@publisher.com">PublisherName</name>
+        <name xlink:href="https://github.com/EliasHossain001">Elias Hossain</name>
     </publisher>
 
     <!--
@@ -60,7 +60,7 @@ Tip: When edited open file in browser to check for errors.
     -->
 
     <display-name>
-        <name lang="en">tts_calc</name>
+        <name lang="en">Bangla TTS for LibreOffice Calc</name>
     </display-name>
 
     <!-- 

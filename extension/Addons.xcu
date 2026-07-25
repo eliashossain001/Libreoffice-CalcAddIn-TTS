@@ -15,10 +15,10 @@
 
     <node oor:name="AddonUI">
         <node oor:name="AddonMenu">
-            <node oor:name="my.identifier.value.for.myaddons.MyAddOn" oor:op="replace">
+            <node oor:name="io.github.eliashossain001.BanglaTTSCalc" oor:op="replace">
 
                 <prop oor:name="Title" oor:type="xs:string">
-                    <value xml:lang="en-US">tts_calc</value>
+                    <value xml:lang="en-US">Bangla TTS</value>
                 </prop>
 
                 <!-- When hit entry execute:
